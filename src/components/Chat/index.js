@@ -4,10 +4,9 @@ import * as s from './chat.module.css';
 
 const Chat = (props) => {
   const {
-    chatRoomId,
+    roomId,
     userId,
     usersOnline,
-    username,
     newMessage,
     messages,
     onSaveMessage,
@@ -36,12 +35,10 @@ const Chat = (props) => {
 
   return (
     <div className={s.chat}>
-      <Toolbar username={username}
-               chatRoomId={chatRoomId}
-               usersOnline={usersOnline}/>
+      <Toolbar roomId={roomId}
+               users={usersOnline}/>
       <MessagesList messages={messages}
                     userId={userId}
-                    username={username}
                     chatMessagesRef={chatMessagesRef}
       />
       <TextArea message={newMessage}

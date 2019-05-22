@@ -19,14 +19,16 @@ class ChatContainer extends React.Component {
       addMessage,
       updateUsersOnline,
       history,
-      username,
-      userId } = this.props;
+      userName
+    } = this.props;
 
-    socket.on('connect', () => {});
+    socket.on('connect', () => {
+    });
 
-    socket.emit(e.JOIN_USER, username, match.params.id);
+    socket.emit(e.JOIN_USER, userName, match.params.id);
     let userJoined = false;
-    socket.on(e.JOIN_USER, ({ user, users }) => {
+
+    socket.on(e.USER_JOINED, ({user, users}) => {
       if (!userJoined) {
         match.params.id = user.room;
         setChatRoomId(user.room);
@@ -34,23 +36,23 @@ class ChatContainer extends React.Component {
         userJoined = true;
         history.push(`${routes.ROOM}/${user.room}`);
       }
+
       updateUsersOnline(users);
     });
 
-    socket.on(e.NEW_MESSAGE, message => {
-      console.log(message);
+    socket.on(e.MESSAGE_RECEIVED, message => {
       addMessage(message);
     });
 
-    socket.on(e.USER_LEFT, ({ user, users }) => {
-      console.log(user + ' disconnect');
+    socket.on(e.USER_LEFT, ({user, users}) => {
+      console.log(user.name + ' disconnect');
       updateUsersOnline(users);
     });
 
     // socket.on('reconnect', () => {
     //   console.log('reconnect');
-    //   if (username) {
-    //     socket.emit(e.JOIN_USER, username, match.params.id);
+    //   if (userName) {
+    //     socket.emit(e.JOIN_USER, userName, match.params.id);
     //     socket.on(e.JOIN_USER, ({ user }) => setUserId(user.id));
     //   }
     // });
@@ -59,15 +61,23 @@ class ChatContainer extends React.Component {
   }
 
   onSendMessage = () => {
-    const { newMessage,  resetMessage, userId, username, match } = this.props;
+    const {
+      match,
+      newMessage,
+      resetMessage,
+      userName,
+      userId
+    } = this.props;
+
     socket.emit(e.NEW_MESSAGE, {
       user: {
         id: userId,
-        name: username
+        name: userName
       },
       body: newMessage,
       room: match.params.id
     });
+
     resetMessage();
   };
 
@@ -77,38 +87,33 @@ class ChatContainer extends React.Component {
   };
 
   render() {
-      return (
-        <Chat {...this.props}
-              onSaveMessage={this.onSaveMessage}
-              onSendMessage={this.onSendMessage}
-              socket={socket}/>
-      );
-  }
+    const { socket } = this.props;
+    return <Chat {...this.props}
+                 onSaveMessage={this.onSaveMessage}
+                 onSendMessage={this.onSendMessage}
+                 socket={socket}/>
+  };
 }
 
 const mapStateToProps = (state) => {
   return {
-    chatRoomId: state.chat.chatRoomId ,
+    roomId: state.chat.roomId ,
     usersOnline: state.chat.usersOnline,
     messages: state.chat.messages,
-    username: state.login.name,
+    userName: state.login.name,
     userId: state.login.id,
     newMessage: state.chat.newMessage
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateUsersOnline: users => dispatch(updateUsersOnline(users)),
-    saveMessage: message => dispatch(saveMessage(message)),
-    addMessage: message => dispatch(addMessage(message)),
-    resetMessage: () => dispatch(resetMessage()),
-    setChatRoomId: (chatRoomId) => dispatch(setChatRoomId(chatRoomId)),
-    setUserId: (userId) => dispatch(setUserId(userId))
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChatContainer);
+export default connect(mapStateToProps, {
+  updateUsersOnline,
+  saveMessage,
+  addMessage,
+  resetMessage,
+  setChatRoomId,
+  setUserId
+})(ChatContainer);
 
 
 

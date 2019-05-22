@@ -1,7 +1,7 @@
 import * as types from './types';
 
 const initialState = {
-  chatRoomId: undefined,
+  roomId: undefined,
   usersOnline: [],
   messages: [],
   newMessage: ''
@@ -11,7 +11,7 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case types.SET_CHAT_ROOM_ID:
       return {...state,
-        chatRoomId: action.chatRoomId
+        roomId: action.roomId
       };
     case types.UPDATE_USERS_ONLINE:
 

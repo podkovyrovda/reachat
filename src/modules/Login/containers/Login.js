@@ -2,30 +2,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Login } from '../../../components';
-
 import { setUserName } from '../actions';
 import * as routes from '../../../routes'
 
-class LoginContainer extends React.Component {
-  onClickButton = () => {
-    const { history, match, setUserIsLogged } = this.props;
+const LoginContainer = (props) => {
+  const onClickButton = () => {
+    const {
+      history,
+      match,
+      setUserIsLogged } = props;
+
     (match.params.id)
       ? history.push(`${routes.ROOM}/${match.params.id}`)
       : history.push(`${routes.ROOM}`);
     setUserIsLogged();
   };
 
-  render() {
-    return (
-      <Login {...this.props} onClickButton={this.onClickButton}/>
-      )
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setUserName: user => dispatch(setUserName(user))
-  };
+  return <Login {...props} onClickButton={onClickButton}/>
 };
 
-export default connect(null, mapDispatchToProps)(LoginContainer);
+export default connect(null, { setUserName })(LoginContainer);
