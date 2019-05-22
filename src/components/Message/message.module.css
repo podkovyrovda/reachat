@@ -1,0 +1,64 @@
+.message {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.messageLeft {
+    justify-content: flex-start;
+}
+
+.messageRight {
+    justify-content: flex-end;
+}
+
+.messageLast {
+    font-weight: 500;
+}
+
+.messageWrap {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    min-width: 30%;
+    padding: 10px;
+}
+
+.messageWrapLeft {
+    background-color: #227dee22;
+    margin-left: 15px;
+}
+
+.messageWrapRight {
+    background-color: #dfdfdf;
+    margin-right: 15px;
+}
+
+
+.meta {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    color: #2d2f36;
+}
+
+.metaName {
+    font-weight: 500;
+    font-size: 12px;
+
+}
+
+.metaDate {
+    font-weight: 500;
+    font-size: 10px;
+}
+
+.body {
+    margin: 0;
+    word-break: break-word;
+    line-height: 1.4em;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+}

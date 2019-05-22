@@ -1,0 +1,34 @@
+.toolbar {
+    border-bottom: 0;
+    padding: 21px;
+    margin-bottom: 0!important;
+    display: -webkit-flex;
+    display: -ms-flex;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    border-right: 0;
+}
+
+.chatId {
+    flex-basis: 50%;
+    text-align: left;
+}
+
+.id {
+    font-size: 0.7em;
+}
+
+.usersList {
+}
+
+.usersListItem {
+    font-size: 0.7em;
+    margin-right: 5px;
+}
+
+.usersOnline {
+    flex-basis: 50%;
+    text-align: right;
+}
