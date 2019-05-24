@@ -3,7 +3,16 @@ import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
 import { Chat } from "../../../components";
-import { updateUsersOnline, saveMessage, addMessage, resetMessage, setChatRoomId } from "../actions";
+import {
+  updateUsersOnline,
+  saveMessage,
+  addMessage,
+  resetMessage,
+  setChatRoomId,
+  serverMessage,
+  startTyping,
+  stopTyping
+} from "../actions";
 import { setUserId } from '../../Login/actions';
 import * as routes from '../../../routes';
 import e from '../../../server/events';
@@ -11,6 +20,11 @@ import e from '../../../server/events';
 const socket = io('http://localhost:5000');
 
 class ChatContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.chatMessagesRef = React.createRef();
+  }
   componentDidMount() {
     const {
       match,
@@ -19,7 +33,10 @@ class ChatContainer extends React.Component {
       addMessage,
       updateUsersOnline,
       history,
-      userName
+      userName,
+      serverMessage,
+      startTyping,
+      stopTyping
     } = this.props;
 
     socket.on('connect', () => {
@@ -29,24 +46,34 @@ class ChatContainer extends React.Component {
     let userJoined = false;
 
     socket.on(e.USER_JOINED, ({user, users}) => {
+      const { room, id, name, color } = user;
       if (!userJoined) {
-        match.params.id = user.room;
-        setChatRoomId(user.room);
-        setUserId(user.id);
+        match.params.id = room;
+        setChatRoomId(room);
+        setUserId(id);
         userJoined = true;
-        history.push(`${routes.ROOM}/${user.room}`);
+        history.push(`${routes.ROOM}/${room}`);
+        (users.length === 1) && serverMessage(`room ${ room } was created`);
       }
-
       updateUsersOnline(users);
+      serverMessage(`${ name } joined to the room`, color);
     });
 
     socket.on(e.MESSAGE_RECEIVED, message => {
       addMessage(message);
     });
 
-    socket.on(e.USER_LEFT, ({user, users}) => {
-      console.log(user.name + ' disconnect');
+    socket.on(e.USER_LEFT, ({user, users, color}) => {
+      serverMessage(`${ user.name } left`, color);
       updateUsersOnline(users);
+    });
+
+    socket.on(e.START_TYPING, (user) => {
+      startTyping(user)
+    });
+
+    socket.on(e.STOP_TYPING, (userId) => {
+      stopTyping(userId);
     });
 
     // socket.on('reconnect', () => {
@@ -78,31 +105,59 @@ class ChatContainer extends React.Component {
       room: match.params.id
     });
 
+    socket.emit(e.STOP_TYPING);
     resetMessage();
+  };
+
+  scrollMessagesList = () => {
+    const list = this.chatMessagesRef.current;
+
+    if (list) {
+      list.scrollTop = list.scrollHeight;
+    }
+  }
+
+  onKeyDown = (event) => {
+    const { newMessage } = this.props;
+    if (event.keyCode === +'13' && newMessage.length === 0) {
+      event.preventDefault();
+    } else if (event.keyCode === +'13') {
+      event.preventDefault();
+      this.onSendMessage();
+    }
   };
 
   onSaveMessage = (message) => {
     const { saveMessage } = this.props;
-    saveMessage(message);
+
+    const mes = saveMessage(message);
+    //TODO почему экшн работает правильно, но в стейт newMessage приходит с опозданием
+    (mes.newMessage.length > 0)
+      ? socket.emit(e.START_TYPING)
+      : socket.emit(e.STOP_TYPING) ;
   };
 
   render() {
-    const { socket } = this.props;
     return <Chat {...this.props}
                  onSaveMessage={this.onSaveMessage}
                  onSendMessage={this.onSendMessage}
-                 socket={socket}/>
+                 onKeyDown={this.onKeyDown}
+                 chatMessagesRef={this.chatMessagesRef}
+                 scrollMessagesList={this.scrollMessagesList}
+    />
   };
 }
 
 const mapStateToProps = (state) => {
+  const { roomId, usersOnline, messages, newMessage } = state.chat;
+  const { name, id } = state.login;
   return {
-    roomId: state.chat.roomId ,
-    usersOnline: state.chat.usersOnline,
-    messages: state.chat.messages,
-    userName: state.login.name,
-    userId: state.login.id,
-    newMessage: state.chat.newMessage
+    roomId,
+    usersOnline,
+    messages,
+    userName: name,
+    userId: id,
+    newMessage
   };
 };
 
@@ -112,7 +167,10 @@ export default connect(mapStateToProps, {
   addMessage,
   resetMessage,
   setChatRoomId,
-  setUserId
+  setUserId,
+  serverMessage,
+  startTyping,
+  stopTyping
 })(ChatContainer);
 
 

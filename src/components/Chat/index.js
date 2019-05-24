@@ -10,28 +10,11 @@ const Chat = (props) => {
     newMessage,
     messages,
     onSaveMessage,
-    onSendMessage
+    onSendMessage,
+    onKeyDown,
+    scrollMessagesList,
+    chatMessagesRef
   } = props;
-
-  const chatMessagesRef = useRef();
-
-  const scrollMessages = () => {
-    const messages = chatMessagesRef.current;
-    if (messages) {
-      messages.scrollTop = messages.scrollHeight;
-    }
-  };
-
-  const onPressEnter = (e) => {
-    if ((e.ctrlKey && e.keyCode === 13)) {
-      e.preventDefault();
-      onSaveMessage(`${e.target.value}\n`)
-    } else if (e.keyCode === 13) {
-      e.preventDefault();
-      onSendMessage();
-      scrollMessages();
-    }
-  };
 
   return (
     <div className={s.chat}>
@@ -40,13 +23,13 @@ const Chat = (props) => {
       <MessagesList messages={messages}
                     userId={userId}
                     chatMessagesRef={chatMessagesRef}
+                    scrollMessagesList={scrollMessagesList}
       />
       <TextArea message={newMessage}
                 userId={userId}
-                onPressEnter={onPressEnter}
                 onSaveMessage={onSaveMessage}
                 onSendMessage={onSendMessage}
-                scrollMessages={scrollMessages}
+                onKeyDown={onKeyDown}
       />
     </div>
   )

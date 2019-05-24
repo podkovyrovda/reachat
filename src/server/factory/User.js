@@ -1,4 +1,4 @@
-const shortid = require('shortid');
+const nanoid = require('nanoid');
 
 module.exports = class User {
   constructor(name) {
@@ -6,7 +6,7 @@ module.exports = class User {
     this._id = null;
     this._room = null;
 
-    this.id = shortid.generate();
+    this.id = nanoid(6);
   }
 
   get id() {

@@ -13,7 +13,10 @@ const Toolbar = ({ roomId, users }) => {
         {
           users.map((user, i) =>
             <span className={ s.usersListItem } key={i}>
-              { user }
+              <span style={{backgroundColor: user.color}} className={ s.userColor }>
+
+              </span>
+              { user.name }
             </span>)
         }
       </div>

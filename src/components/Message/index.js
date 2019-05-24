@@ -1,24 +1,43 @@
 import React from 'react';
 import * as s from './message.module.css';
 
-const Message = ({ isMy, author, date, body }) => {
-  return (
-    <div className={ isMy ? `${ s.message } ${ s.messageRight }` : `${ s.message } ${ s.messageLeft }` }>
-      <div className={ isMy ? `${ s.messageWrap } ${ s.messageWrapRight }` : `${ s.messageWrap } ${ s.messageWrapLeft }` }>
-        <div className={ s.meta }>
-          <div className={ s.metaName }>
-            { (isMy) ? 'You' : `${author}` }
-          </div>
-          <div className={ s.metaDate }>
-            { date }
-          </div>
-        </div>
-        <div className={ s.body }>
-            { body }
+const Message = ({ isMy, isServer, isTyping, author, date, body, color }) => {
+  if (isServer) {
+    return (
+      <div className={`${ s.serverMessageWrapper }`}>
+        <div style={{backgroundColor: color}} className={`${ s.serverMessage }`}>
+          { body }
         </div>
       </div>
-    </div>
-  );
+    )
+  } else if (isTyping) {
+    if (isMy) return null;
+    return (
+      <div className={`${ s.messageLeft }`}>
+        <div style={{backgroundColor: color}}  className={`${ s.typingMessage }`}>
+          { body } is typing...
+
+        </div>
+      </div>
+    )
+  } else {
+    return (
+      <div className={ isMy ? `${ s.message } ${ s.messageRight }` : `${ s.message } ${ s.messageLeft }` }>
+        <div style={isMy ? null : {backgroundColor: color}} className={ isMy ? `${ s.messageWrap } ${ s.messageWrapRight }` : `${ s.messageWrap } ${ s.messageWrapLeft }` }>
+          <div className={ s.meta }>
+            <div className={ s.metaName }>
+              { (isMy) ? 'You' : `${author}` }
+            </div>
+            <div className={ s.metaDate }>
+              { date }
+            </div>
+          </div>
+          <div className={ s.body }>
+            { body }
+          </div>
+        </div>
+      </div>)
+  }
 };
 
 export default Message;

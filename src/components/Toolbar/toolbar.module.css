@@ -17,18 +17,30 @@
 }
 
 .id {
-    font-size: 0.7em;
+    font-size: 10px;
 }
 
 .usersList {
 }
 
 .usersListItem {
-    font-size: 0.7em;
+    font-size: 10px;
     margin-right: 5px;
+}
+
+.usersListItem:last-child {
+    margin-right: 0px;
 }
 
 .usersOnline {
     flex-basis: 50%;
     text-align: right;
+}
+
+.userColor {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 3px;
+    border-radius: 50%;
 }
