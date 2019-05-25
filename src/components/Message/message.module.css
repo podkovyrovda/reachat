@@ -39,15 +39,12 @@
 .typingMessage {
     animation: fade 2s infinite linear;
     animation-direction: alternate;
-    margin-left: 15px;
     font-size: 10px;
-    width: 150px;
-    padding: 5px 15px 5px 15px;
     border-radius: 3px;
 }
 
 @keyframes fade {
-    to { opacity: 0.6 }
+    to { opacity: 0.3 }
 }
 
 .messageLast {
@@ -70,7 +67,7 @@
 
 .messageWrapRight {
     background-color: #dfdfdf;
-    margin-right: 15px;
+    margin-right: 10px;
 }
 
 .meta {

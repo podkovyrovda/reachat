@@ -5,24 +5,28 @@ const TextArea = ({ onSaveMessage,
                     onSendMessage,
                     message,
                     onKeyDown}) => {
+
   const onSubmit = (e) => {
     e.preventDefault();
     onSendMessage();
   };
 
+  const onChange = (e) => {
+    e.preventDefault();
+    onSaveMessage(e.target.value)
+  };
+
   return (
     <form className={ s.form }
-          onSubmit={ (e) => onSubmit(e)  }>
+          onSubmit={ onSubmit }>
       <div className={ s.textareaWrapper }>
         <textarea className={ s.textarea }
-                  onChange={ (e) => onSaveMessage(e.target.value) }
+                  onChange={ onChange }
                   onKeyDown={onKeyDown}
                   value={ message }
                   required autoFocus autoComplete="off" />
       </div>
-      <button className={ s.submitButton } type="submit">
-        Send
-      </button>
+      <input type="submit" className={ s.submitButton } value="Send"/>
     </form>
   );
 };

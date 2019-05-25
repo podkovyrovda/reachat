@@ -17,7 +17,7 @@ import { setUserId } from '../../Login/actions';
 import * as routes from '../../../routes';
 import e from '../../../server/events';
 
-const socket = io('http://localhost:5000');
+const socket = io('http://main.podkovyrov.ru:5000');
 
 class ChatContainer extends React.Component {
   constructor(props) {
@@ -69,7 +69,8 @@ class ChatContainer extends React.Component {
     });
 
     socket.on(e.START_TYPING, (user) => {
-      startTyping(user)
+      const { userId } = this.props;
+      if (userId !== user.id) startTyping(user)
     });
 
     socket.on(e.STOP_TYPING, (userId) => {
@@ -96,6 +97,8 @@ class ChatContainer extends React.Component {
       userId
     } = this.props;
 
+    socket.emit(e.STOP_TYPING);
+
     socket.emit(e.NEW_MESSAGE, {
       user: {
         id: userId,
@@ -105,7 +108,6 @@ class ChatContainer extends React.Component {
       room: match.params.id
     });
 
-    socket.emit(e.STOP_TYPING);
     resetMessage();
   };
 
@@ -115,27 +117,27 @@ class ChatContainer extends React.Component {
     if (list) {
       list.scrollTop = list.scrollHeight;
     }
-  }
+  };
 
   onKeyDown = (event) => {
-    const { newMessage } = this.props;
-    if (event.keyCode === +'13' && newMessage.length === 0) {
-      event.preventDefault();
-    } else if (event.keyCode === +'13') {
+    if (event.keyCode === +'13') {
       event.preventDefault();
       this.onSendMessage();
     }
   };
 
   onSaveMessage = (message) => {
-    const { saveMessage } = this.props;
-
-    const mes = saveMessage(message);
-    //TODO почему экшн работает правильно, но в стейт newMessage приходит с опозданием
-    (mes.newMessage.length > 0)
-      ? socket.emit(e.START_TYPING)
-      : socket.emit(e.STOP_TYPING) ;
+    this.props.saveMessage(message);
   };
+
+  onStartTyping = () => {
+    socket.emit(e.START_TYPING)
+  };
+
+  onStopTyping = () => {
+    socket.emit(e.STOP_TYPING)
+  };
+
 
   render() {
     return <Chat {...this.props}
@@ -144,6 +146,8 @@ class ChatContainer extends React.Component {
                  onKeyDown={this.onKeyDown}
                  chatMessagesRef={this.chatMessagesRef}
                  scrollMessagesList={this.scrollMessagesList}
+                 onStartTyping={this.onStartTyping}
+                 onStopTyping={this.onStopTyping}
     />
   };
 }

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import { Toolbar, MessagesList, TextArea } from "../";
 import * as s from './chat.module.css';
 
@@ -13,8 +13,12 @@ const Chat = (props) => {
     onSendMessage,
     onKeyDown,
     scrollMessagesList,
+    onStartTyping,
+    onStopTyping,
     chatMessagesRef
   } = props;
+
+  (newMessage) ? onStartTyping() : onStopTyping();
 
   return (
     <div className={s.chat}>

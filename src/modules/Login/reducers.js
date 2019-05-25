@@ -1,7 +1,7 @@
 import { SET_USER_NAME, SET_USER_ID } from './actions'
 
 const initialState = {
-  name: null,
+  name: '',
   id: null
 };
 

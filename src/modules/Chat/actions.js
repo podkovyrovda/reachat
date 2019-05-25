@@ -3,7 +3,9 @@ import * as types from './types';
 export const setChatRoomId = (roomId) => ({ type: types.SET_CHAT_ROOM_ID, roomId });
 export const updateUsersOnline = (users) => ({ type: types.UPDATE_USERS_ONLINE, users });
 
-export const saveMessage = (newMessage) => ({ type: types.SAVE_MESSAGE, newMessage });
+export const saveMessage = (newMessage) => {
+  return { type: types.SAVE_MESSAGE, newMessage }
+};
 export const addMessage = (message) => {
   const { user, body, timestamp, color } = message;
   return { type: types.ADD_MESSAGE,

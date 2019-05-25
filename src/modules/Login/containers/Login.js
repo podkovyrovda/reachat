@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 
 import { Login } from '../../../components';
 import { setUserName } from '../actions';
-import * as routes from '../../../routes'
+import * as routes from '../../../routes';
 
 const LoginContainer = (props) => {
-  const onClickButton = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     const {
       history,
       match,
@@ -18,7 +19,9 @@ const LoginContainer = (props) => {
     setUserIsLogged();
   };
 
-  return <Login {...props} onClickButton={onClickButton}/>
+  return <Login {...props} onSubmit={onSubmit}/>
 };
 
-export default connect(null, { setUserName })(LoginContainer);
+const mapStateToProps = (state) => ({ name: state.login.name });
+
+export default connect(mapStateToProps, { setUserName })(LoginContainer);
